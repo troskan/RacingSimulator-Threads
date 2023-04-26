@@ -14,6 +14,13 @@ namespace Labb3_Threads
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write(text);
             Console.ForegroundColor = originalColor;
+        } 
+        public static void WriteGreen(string text)
+        {
+            ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(text);
+            Console.ForegroundColor = originalColor;
         }
     }
 }
