@@ -15,49 +15,48 @@ namespace Labb3_Threads
         public string Name { get; set; }
         public int CurrentSpeed { get; set; }
         public double DistanceTraveled { get; set; }
-        public static Car[] FinishedCars = new Car[1];
         public double TimeDriven { get; set; }
+
+        public static Car[] FinishedCars = new Car[1];
+
 
         public static void StartCar(Car car, int ID, string carName)
         {
-
+            //Set car details
             car.ID = ID;
             car.Name = carName;
             car.CurrentSpeed = 120;
             car.DistanceTraveled = 0;
             car.TimeDriven = 0;
 
-
+            //Time details
             Stopwatch sw = Stopwatch.StartNew();
             Stopwatch raceTime = Stopwatch.StartNew();
-            sw.Start();
-            raceTime.Start();
+            sw.Start(); //Time for measuring when to generate accidents.
+            raceTime.Start();//The accurate time for measuring the race from start to finish.
 
-
-            int counter = 0;
             Console.WriteLine($"{car.Name} is getting ready to race...");
             Thread.Sleep(3000);
+
             for (double i = car.DistanceTraveled; i <= 1000; car.DistanceTraveled++)
             {
                 Thread.Sleep(50);
 
-                double time = raceTime.Elapsed.TotalHours; // 50 milliseconds = 0.05 hours
+                double time = raceTime.Elapsed.TotalHours; 
                 double distance = car.CurrentSpeed * time;
+
                 car.DistanceTraveled += distance;
+
                 if (sw.Elapsed.TotalSeconds > 9 && sw.Elapsed.TotalSeconds < 11)
-
                 {
-
                     NoFuel(car);
                     TirePuncture(car);
                     BirdCollision(car);
                     EngineFailure(car);
-
                 }
 
-                if (car.DistanceTraveled >= 100) { break; }
+                if (car.DistanceTraveled >= 1700) { break; }
                
-
                 lock (ConsoleLock)
                 {
                     // Set the cursor position to the car's row and update the car's information
@@ -70,28 +69,29 @@ namespace Labb3_Threads
                 {
                     sw.Restart();
                 }
-
             }
+            car.TimeDriven = raceTime.Elapsed.TotalSeconds;
+
+            sw.Stop();
+            raceTime.Stop();
+
             if (FinishedCars[0] == null)
             {
                 FinishedCars[0] = car;
+
                 Console.SetCursorPosition(0, car.ID + 6);
                 Console.WriteLine($"{car.Name} has finished the race first and is declared winner!");
                 Thread.Sleep(5000);
             }
             else
             {
+                FinishedCars[1] = car;
+
                 Console.SetCursorPosition(0, car.ID + 6);
                 Console.WriteLine($"{car.Name} has finished the race and is declared as looser!");
+                Thread.Sleep(5000);
             }
-
-
-            sw.Stop();
-            raceTime.Stop();
-            car.TimeDriven = raceTime.Elapsed.Seconds;
-
         }
-
         public static void RaceEndCondtions(Car car1, Car car2)
         {
             Console.Clear();
@@ -117,10 +117,9 @@ namespace Labb3_Threads
             {
                 Console.SetCursorPosition(0, car.ID + 3);
                 ConsoleHelper.WriteRed("WARNING: ");
-                Console.WriteLine($"{car.ID} {car.Name} has run out of fuel! Refueling will take 10 secounds!");
-                Thread.Sleep(10000);
+                Console.WriteLine($"{car.ID} {car.Name} has run out of fuel! Refueling will take 4 secounds!");
+                Thread.Sleep(4000);
                 Console.Clear();
-
             }
         }
         public static void TirePuncture(Car car)
@@ -134,8 +133,8 @@ namespace Labb3_Threads
                 Console.SetCursorPosition(0, car.ID + 3);
 
                 ConsoleHelper.WriteRed("WARNING: ");
-                Console.WriteLine($"{car.ID} {car.Name} has gotten puncture, replacing tire will take 15 secounds");
-                Thread.Sleep(15000);
+                Console.WriteLine($"{car.ID} {car.Name} has gotten puncture, replacing tire will take 4 secounds");
+                Thread.Sleep(4000);
                 Console.Clear();
             }
         }
@@ -150,8 +149,8 @@ namespace Labb3_Threads
                 Console.SetCursorPosition(0, car.ID + 3);
 
                 ConsoleHelper.WriteRed("WARNING: ");
-                Console.WriteLine($"{car.ID} {car.Name} has crashed with a seagull, starting windshield wipers! {car.Name} will stop for 10 secounds!");
-                Thread.Sleep(15000);
+                Console.WriteLine($"{car.ID} {car.Name} has crashed with a seagull, delay for 3 secounds! ");
+                Thread.Sleep(3000);
                 Console.Clear();
 
             }
@@ -169,14 +168,11 @@ namespace Labb3_Threads
 
                 car.CurrentSpeed -= 1;
                 ConsoleHelper.WriteRed("WARNING: ");
-                Console.WriteLine($"{car.ID} {car.Name} has gotten puncture, replacing tire will take 15 secounds");
-                Thread.Sleep(15000);
+                Console.WriteLine($"{car.ID} {car.Name} has engine failure, delay for 5 secounds, -1 km/h.");
+                Thread.Sleep(5000);
                 Console.Clear();
 
             }
         }
-
     }
-
-
 }
